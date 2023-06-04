@@ -81,6 +81,7 @@
 		<Unit filename="src/EngineJS/quickjs/quickjs.h" />
 		<Unit filename="src/EngineJS/quickjs/unicode_gen_def.h" />
 		<Unit filename="src/core/AppX_core.h" />
+		<Unit filename="src/core/config_json.cpp" />
 		<Unit filename="src/core/countercycle.cpp" />
 		<Unit filename="src/core/enginejs.cpp" />
 		<Unit filename="src/core/main.cpp" />
