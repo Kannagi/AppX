@@ -1,0 +1,13 @@
+{
+	"name": "test",
+	"version": "1.0.0",
+
+	"module": [
+		"module.js",
+		"main.js"
+	],
+
+	"global": [
+		"appx.js"
+	]
+}

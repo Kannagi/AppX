@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="AppXJS" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="bin">
+				<Option output="bin/AppXJS" prefix_auto="0" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="obj/Linux/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectCompilerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-fomit-frame-pointer" />
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O2" />
+					<Add option="-m64" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-m64" />
+					<Add option="-lm -ldl -lpthread" />
+					<Add directory="lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="bin windows">
+				<Option platforms="Unix;" />
+				<Option output="bin/AppXJS" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/" />
+				<Option object_output="obj/Windows/" />
+				<Option type="1" />
+				<Option compiler="mingw64__compiler" />
+				<Option projectCompilerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-fomit-frame-pointer" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-lm" />
+					<Add option="-l:libwinpthread.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="src/EngineJS" />
+			<Add directory="src/FileManager/nativefiledialog/include" />
+		</Compiler>
+		<Unit filename="src/EngineJS/quickjs/cutils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/EngineJS/quickjs/cutils.h" />
+		<Unit filename="src/EngineJS/quickjs/libbf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/EngineJS/quickjs/libbf.h" />
+		<Unit filename="src/EngineJS/quickjs/libregexp-opcode.h" />
+		<Unit filename="src/EngineJS/quickjs/libregexp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/EngineJS/quickjs/libregexp.h" />
+		<Unit filename="src/EngineJS/quickjs/libunicode-table.h" />
+		<Unit filename="src/EngineJS/quickjs/libunicode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/EngineJS/quickjs/libunicode.h" />
+		<Unit filename="src/EngineJS/quickjs/list.h" />
+		<Unit filename="src/EngineJS/quickjs/quickjs-atom.h" />
+		<Unit filename="src/EngineJS/quickjs/quickjs-libc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/EngineJS/quickjs/quickjs-libc.h" />
+		<Unit filename="src/EngineJS/quickjs/quickjs-opcode.h" />
+		<Unit filename="src/EngineJS/quickjs/quickjs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/EngineJS/quickjs/quickjs.h" />
+		<Unit filename="src/EngineJS/quickjs/unicode_gen_def.h" />
+		<Unit filename="src/core/AppX_core.h" />
+		<Unit filename="src/core/countercycle.cpp" />
+		<Unit filename="src/core/enginejs.cpp" />
+		<Unit filename="src/core/main.cpp" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>
