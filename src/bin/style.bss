@@ -1,0 +1,54 @@
+
+button.default
+{
+	font-ttf(sans-bold),
+	font-size(17),
+	font-shadow(-1,-1),
+
+	background-color-rgba(0,120,240,255),
+	background-color-linear-rgba(0,60,120,255),
+	border-radius(5.0),
+}
+
+button-active.default
+{
+	brightness(0.5),
+	brightness-color(#00ff00),
+}
+
+button-hover.default
+{
+	font-ttf(sans-bold),
+	font-size(17),
+	font-color(#00ff00),
+	font-shadow(-1,-1),
+
+	background-color(#00ff00),
+	border-radius(4.0),
+}
+
+button-layout.default
+{
+	text(test exam),
+	visible(true),
+	rect(300,100,138,24),
+}
+
+button-layout.default
+{
+	text(ok2),
+	visible(true),
+	rect(100,100,138,24),
+}
+
+button-layout.default
+{
+	visible(true),
+	rect(200,200,138,24),
+	text(button1),
+}
+
+
+
+
+

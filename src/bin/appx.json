@@ -1,6 +1,7 @@
 {
 	"name": "test",
 	"version": "1.0.0",
+	"tar": "",
 
 	"module": [
 		"module.js",
@@ -9,5 +10,9 @@
 
 	"global": [
 		"appx.js"
+	],
+
+	"style": [
+		"style.bss"
 	]
 }

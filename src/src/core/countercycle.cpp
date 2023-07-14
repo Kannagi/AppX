@@ -2,7 +2,8 @@
 #define SIZE 1000000
 
 
-unsigned long long rdtsc(void) {
+unsigned long long rdtsc(void)
+{
     unsigned int lo, hi;
     __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
     return ((unsigned long long)hi << 32) | lo;
@@ -10,11 +11,10 @@ unsigned long long rdtsc(void) {
 
 __attribute__((noinline))  void test(double *tableau,int n)
 {
-	  // Boucle pour ajouter 5 à chaque élément du tableau
-	  for (int i = 0; i < n; i++) {
-		tableau[i] += 5.12;
-
-	  }
+    for (int i = 0; i < n; i++)
+    {
+        tableau[i] += 5.12;
+    }
 
 }
 
@@ -24,7 +24,7 @@ __attribute__((noinline))  void test(double *tableau,int n)
 
 
 
-	end = rdtsc(); // Mesure le cycle de fin
+    end = rdtsc(); // Mesure le cycle de fin
 
 
 
@@ -33,7 +33,7 @@ __attribute__((noinline))  void test(double *tableau,int n)
   memset(tableau, 1.0d, sizeof(tableau)); // Initialisation avec des valeurs par défaut à 0
 
 
-	test(tableau,SIZE);
+    test(tableau,SIZE);
 
 
 

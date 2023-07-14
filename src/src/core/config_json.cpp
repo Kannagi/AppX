@@ -19,40 +19,36 @@ std::vector<std::string> extractNameFileJSON(const std::string& filejson,const s
     std::size_t position = contentJSON.find("\""+groupname+"\"");
 
     if (position == std::string::npos)
-		return nameFile;
+        return nameFile;
 
-	position = contentJSON.find("[", position);
-	if (position == std::string::npos)
-		return nameFile;
-
-
-	std::size_t endTab = contentJSON.find("]", position);
-	if (endTab == std::string::npos)
-		return nameFile;
+    position = contentJSON.find("[", position);
+    if (position == std::string::npos)
+        return nameFile;
 
 
-	std::string filesJSON = contentJSON.substr(position + 1, endTab - position - 1);
-
-	std::size_t beginName = filesJSON.find("\"");
-	std::size_t endName;
-	while (beginName != std::string::npos)
-	{
-		endName = filesJSON.find("\"", beginName + 1);
-		if (endName != std::string::npos)
-		{
-			std::string tfile = filesJSON.substr(beginName + 1, endName - beginName - 1);
-			nameFile.push_back(tfile);
-			beginName = filesJSON.find("\"", endName + 1);
-		}
-		else
-		{
-			break;
-		}
-	}
+    std::size_t endTab = contentJSON.find("]", position);
+    if (endTab == std::string::npos)
+        return nameFile;
 
 
+    std::string filesJSON = contentJSON.substr(position + 1, endTab - position - 1);
 
-
+    std::size_t beginName = filesJSON.find("\"");
+    std::size_t endName;
+    while (beginName != std::string::npos)
+    {
+        endName = filesJSON.find("\"", beginName + 1);
+        if (endName != std::string::npos)
+        {
+            std::string tfile = filesJSON.substr(beginName + 1, endName - beginName - 1);
+            nameFile.push_back(tfile);
+            beginName = filesJSON.find("\"", endName + 1);
+        }
+        else
+        {
+            break;
+        }
+    }
 
     return nameFile;
 }

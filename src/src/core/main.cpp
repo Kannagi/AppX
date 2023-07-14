@@ -11,25 +11,27 @@
 
 int main()
 {
-	const std::string fileJSON = "appx.json";
+    UI_init();
 
-	APPX_FILE appxf;
+    const std::string fileJSON = "appx.json";
+
+    APPX_FILE appxf;
     appxf.strFileGlobal = extractNameFileJSON(fileJSON,"global");
     appxf.strFileModule = extractNameFileJSON(fileJSON,"module");
-/*
-    // Afficher les noms de fichiers
-    for (const std::string& nomFichier : nomsFichiers) {
-        std::cout << nomFichier << std::endl;
-    }
-*/
+    appxf.strFileStyle  = extractNameFileJSON(fileJSON,"style");
 
     std::map<std::string, std::string> values = extractValues(fileJSON);
-
+/*
     // Display the values
     std::cout << "Name: " << values["name"] << std::endl;
     std::cout << "Version: " << values["version"] << std::endl;
-
-
+	std::cout << "tar: " << values["tar"] << std::endl;
+*/
     enginejs(appxf);
+
     return 0;
 }
+
+
+
+

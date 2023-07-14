@@ -1,0 +1,49 @@
+
+button.default
+{
+	font-ttf(sans-bold),
+	font-size(17),
+	font-color(#00ff00),
+	font-color-rgba(25,25,5,1.0),
+	font-shadow(-1,-1),
+
+	background-color(#00ff00,#00ff00),
+	border-radius(4.0),
+	padding-float(0,0)
+	padding(0,0)
+
+	line(1.0);
+	line-color(1.0)
+}
+
+button-active.default
+{
+	brightness(0.5),
+	brightness-color(#00ff00),
+	grayscale(1.0)
+}
+
+button-hover.default
+{
+	font-ttf(sans-bold),
+	font-size(17),
+	font-color(#00ff00),
+	font-color-rgba(25,25,255,1.0),
+	font-shadow(-1,-1),
+
+	background-color(#00ff00,#00ff00),
+	border-radius(4.0),
+}
+
+button-pos.default
+{
+	visible(false),
+	rect(0,0,100,100),
+	rect-float(0.1,0.1,0.2,0.2),
+	rect-min-float(0.1,0.1,0.2,0.2),
+	rect-max-float(0.1,0.1,0.2,0.2),
+}
+
+
+
+

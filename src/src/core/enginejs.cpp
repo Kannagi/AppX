@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,52 +12,70 @@
 
 #include "AppX.h"
 
-#include <unistd.h>
+class JSFunctionCaller
+{
+
+private:
+    JSContext *ctx;
+    JSValue global_obj;
+    std::vector<JSValue> func_vals;
+
+public:
+    JSFunctionCaller(JSContext *ctx,JSValue global_obj)
+    {
+        this->ctx = ctx;
+        this->global_obj = JS_GetGlobalObject(this->ctx);
+    }
+
+    ~JSFunctionCaller()
+    {
+        for (size_t i = 0; i < func_vals.size(); i++)
+        {
+            JS_FreeValue(ctx, func_vals[i]);
+        }
+    }
+
+    void initCallFunction(const char *function_name)
+    {
+        JSValue func_val = JS_GetPropertyStr(ctx, global_obj, function_name);
+        this->func_vals.push_back(func_val);
+    }
+
+    void callFunction(int id)
+    {
+        if (JS_IsFunction(ctx, func_vals[id]))
+        {
+            JSValue ret_val = JS_Call(ctx, func_vals[id], global_obj, 0, NULL);
+/*
+            if (JS_IsException(ret_val))
+            {
+                // js_std_dump_error(ctx);
+            }
+*/
+            JS_FreeValue(ctx, ret_val);
+        }
+        else
+        {
+            std::cout << "Function '" << id << "' is not defined." << std::endl;
+        }
+    }
+};
 
 typedef struct
 {
     int delay_time;
     bool loop;
-}APPX;
+} APPX;
 
 APPX Appx;
 
 static void init()
 {
-	Appx.delay_time = 0;
-	Appx.loop = true;
+    Appx.delay_time = 0;
+    Appx.loop = true;
 }
-
-static void call_js_function(JSContext *ctx, const char *function_name)
-{
-    JSValue global_obj, func_val, ret_val;
-
-    global_obj = JS_GetGlobalObject(ctx);
-    func_val = JS_GetPropertyStr(ctx, global_obj, function_name);
-
-    if (JS_IsFunction(ctx, func_val))
-    {
-        ret_val = JS_Call(ctx, func_val, global_obj, 0, NULL);
-
-        if (JS_IsException(ret_val))
-        {
-            //js_std_dump_error(ctx);
-        }
-
-        JS_FreeValue(ctx, ret_val);
-    }else
-    {
-        printf("Function '%s' is not defined.\n", function_name);
-    }
-
-    JS_FreeValue(ctx, func_val);
-    JS_FreeValue(ctx, global_obj);
-}
-
-
 
 //------------------------------------------------------------------------------------------
-
 
 static char* loadFile(const char* filename,int &fileSize)
 {
@@ -70,7 +87,7 @@ static char* loadFile(const char* filename,int &fileSize)
     }
 
     fseek(file, 0, SEEK_END);
-	fileSize = ftell(file);
+    fileSize = ftell(file);
     fseek(file, 0, SEEK_SET);
 
     if (fileSize <= 0)
@@ -97,7 +114,7 @@ static char* loadFile(const char* filename,int &fileSize)
         return NULL;
     }
 
-	buffer[fileSize] = '\0';
+    buffer[fileSize] = '\0';
 
     fclose(file);
 
@@ -105,6 +122,23 @@ static char* loadFile(const char* filename,int &fileSize)
 }
 
 //------------------------------------------------------------------------------------------
+static JSValue appx_callback_plugin(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
+{
+    for (int i = 0; i < argc; i++)
+    {
+        const char *arg = JS_ToCString(ctx, argv[i]);
+        printf("%s",arg);
+        if(i != argc-1)
+            printf(" , ");
+        JS_FreeCString(ctx, arg);
+    }
+
+    printf("\n");
+
+    return JS_UNDEFINED;
+
+    //return JS_NewInt32(ctx, 5);
+}
 
 static JSValue appx_callback_print(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
@@ -158,6 +192,33 @@ static JSValue appx_callback_exit(JSContext *ctx, JSValueConst this_val, int arg
 
 static JSValue appx_callback_Window(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv)
 {
+	const char *arg[3];
+	int i;
+
+
+	for(i = 0;i < 3;i++)
+		arg[i] = NULL;
+
+	for(i = 0;i < argc;i++)
+		arg[i] = JS_ToCString(ctx, argv[i]);
+
+	int w = 640;
+	int h = 480;
+
+	if(arg[1] != NULL)
+		w = atoi(arg[1]);
+
+	if(arg[2] != NULL)
+		h = atoi(arg[2]);
+
+	if(arg[0] != NULL)
+		UI_Window(arg[0],w,h);
+	else
+		UI_Window("AppX",w,h);
+
+
+	UI_Clear();
+
 
     return JS_UNDEFINED;
 }
@@ -274,16 +335,16 @@ typedef JSValue (*JSFunction)(JSContext*, JSValue, int, JSValue*);
 
 static inline void addFunction(JSContext *ctx,JSValue my_obj,JSFunction func,const char *name)
 {
-	JS_SetPropertyStr(ctx, my_obj, name, JS_NewCFunction(ctx, func, name, 0));
+    JS_SetPropertyStr(ctx, my_obj, name, JS_NewCFunction(ctx, func, name, 0));
 }
 
 static void Eval(JSContext *ctx,const char *filename,int type)
 {
-	int n = 0;
-	char* buffer = loadFile(filename,n);
-	JSValue result = JS_Eval(ctx, buffer, n, filename, type);
+    int n = 0;
+    char* buffer = loadFile(filename,n);
+    JSValue result = JS_Eval(ctx, buffer, n, filename, type);
 
-	if (JS_IsException(result))
+    if (JS_IsException(result))
     {
         // Récupération de l'exception
         JSValue exception_val = JS_GetException(ctx);
@@ -312,7 +373,7 @@ static void Eval(JSContext *ctx,const char *filename,int type)
 
 int enginejs(APPX_FILE &appxf)
 {
-	init();
+    init();
 
     JSRuntime *rt;
     JSContext *ctx;
@@ -326,6 +387,8 @@ int enginejs(APPX_FILE &appxf)
     JSValue my_obj = JS_NewObject(ctx);
 
     JS_SetPropertyStr(ctx, global_obj, "Appx", my_obj);
+
+    addFunction(ctx,my_obj,appx_callback_plugin,"plugin");
 
     addFunction(ctx,my_obj,appx_callback_print,"print");
     addFunction(ctx,my_obj,appx_callback_start,"start");
@@ -346,41 +409,76 @@ int enginejs(APPX_FILE &appxf)
     addFunction(ctx,my_obj,appx_callback_SoundStop,"SoundStop");
     addFunction(ctx,my_obj,appx_callback_GetSound,"GetSound");
 
-	addFunction(ctx,my_obj,appx_callback_WidgetInput,"WidgetInput");
-	addFunction(ctx,my_obj,appx_callback_WidgetButton,"WidgetButton");
-	addFunction(ctx,my_obj,appx_callback_WidgetText,"WidgetText");
+    addFunction(ctx,my_obj,appx_callback_WidgetInput,"WidgetInput");
+    addFunction(ctx,my_obj,appx_callback_WidgetButton,"WidgetButton");
+    addFunction(ctx,my_obj,appx_callback_WidgetText,"WidgetText");
 
 
-	for (const std::string& file : appxf.strFileGlobal)
-	{
-		Eval(ctx, file.c_str(), JS_EVAL_TYPE_GLOBAL);
-	}
+    for (const std::string& file : appxf.strFileGlobal)
+    {
+        Eval(ctx, file.c_str(), JS_EVAL_TYPE_GLOBAL);
+    }
 
-	for (const std::string& file : appxf.strFileModule)
-	{
-		Eval(ctx, file.c_str(), JS_EVAL_TYPE_MODULE);
-	}
+    for (const std::string& file : appxf.strFileModule)
+    {
+        Eval(ctx, file.c_str(), JS_EVAL_TYPE_MODULE);
+    }
 
-	call_js_function(ctx, "global_Appx_main");
+    auto callback = new JSFunctionCaller(ctx,global_obj);
 
-	std::chrono::milliseconds duration(Appx.delay_time);
+    callback->initCallFunction("global_Appx_main"); //0
+    callback->initCallFunction("global_Appx_update"); //1
+    callback->initCallFunction("global_Appx_event"); //2
+    callback->initCallFunction("global_Appx_view"); //3
 
-	if(Appx.delay_time > 0)
-	{
-		while(Appx.loop == true)
-		{
-			call_js_function(ctx, "global_Appx_update");
-			usleep(100000);
-		}
 
-	}
+    callback->callFunction(0); //global_Appx_main
 
-    //call_js_function(ctx, "Appx_update");
 
-	JS_FreeValue(ctx, my_obj);
+    //std::chrono::milliseconds duration(Appx.delay_time);
+
+    int time_ms = Appx.delay_time;
+    int time_msVsync = 0;
+
+    Event event;
+    Event_Init(event);
+
+    if(Appx.delay_time > 0)
+    {
+        SUI_Widget widget(appxf.strFileStyle);
+
+        while( (Appx.loop == true) && (event.exit == 0) )
+        {
+            time_ms+=5;
+            if(Appx.delay_time <= time_ms)
+            {
+                callback->callFunction(1); //global_Appx_update
+                time_ms -= Appx.delay_time;
+            }
+
+            if(time_msVsync >= 60)
+            {
+                Event_Update(&event);
+                UI_Clear();
+
+                widget.render();
+                //callback->callFunction(2); //event
+                //callback->callFunction(3); //render
+				UI_FlipBuffer();
+				time_msVsync -= 60;
+            }
+            time_msVsync+= 5;
+
+            UI_Sleep(5);
+        }
+    }
+
+    delete callback;
+
+    JS_FreeValue(ctx, my_obj);
     JS_FreeValue(ctx, global_obj);
     JS_FreeContext(ctx);
-    JS_FreeRuntime(rt);
+    //JS_FreeRuntime(rt);
 
 
     return 0;
